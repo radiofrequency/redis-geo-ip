@@ -13,11 +13,9 @@ var developerGeo = {
     "zipcode": "V5T 1C8",
     state: "British Columbia",
     "city": "VANCOUVER",
-    "rangeMin": 3625168896,
     "key": "3625168896:3625172991",
     "lat": 49.24966,
     "timezone": "-07:00",
-    "rangeMax": 3625172991
 }
 var moretestips = require(__dirname + "/testips.json")
 var moretestlocs = require(__dirname + "/testgeos.json")
