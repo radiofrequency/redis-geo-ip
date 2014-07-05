@@ -1,0 +1,4 @@
+libs/geohasherjs/build
+.DS_Store
+*.swp
+node_modules

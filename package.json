@@ -1,0 +1,22 @@
+{
+    "name": "redis-geo-ip",
+    "version": "0.0.1",
+    "description": "redis geoip lookup",
+    "main": "rgeoip.js",
+    "directories": {
+        "test": "test"
+    },
+    "repository": "https://github.com/radiofrequency/redis-geo-ip.git",
+    "scripts": {
+        "test": "mocha",
+        "preinstall": "npm build libs/geohasherjs/."
+    },
+    "author": "Ryan Folstad",
+    "license": "LICENSE!",
+    "dependencies": {
+        "mocha": "*",
+        "redis": "^0.10.3",
+
+        "underscore": "*"
+    }
+}
