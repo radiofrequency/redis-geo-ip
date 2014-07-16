@@ -182,6 +182,152 @@ var developerIps = ["localhost", "127.0.0.1"]
 
         }
 
+        this.build_index = function(char_limit, src, dst, fn) {
+
+            rcgeo.exists(dst, function(err, exists) {
+                if (exists)
+                    return fn(null, 'index already built')
+
+                //const char_limit = 8;
+                rcgeo.sort(src, "ALPHA", function(err, alltags) {
+                    var number = alltags.length;
+                    var processed = 0;
+
+                    _.each(alltags, function(tag) {
+
+                        var cutoff = char_limit;
+                        var space = 0;
+                        var prefix_tag = '';
+
+                        if (tag.length <= char_limit) {
+                            cutoff = tag.length;
+                        } else {
+                            space = tag.indexOf(' ');
+                            if ((space > 0) && (space < char_limit)) {
+                                cutoff = space;
+                            }
+                        }
+
+                        for (var i = 0; i < cutoff; i++) {
+                            prefix_tag += tag[i];
+
+                            if (i < cutoff - 1) {
+                                rcgeo.zadd(dst, '0', prefix_tag, rcgeo.print);
+                            } else {
+                                if (tag.length > cutoff) {
+                                    rcgeo.zadd(dst, '0', prefix_tag, rcgeo.print);
+                                }
+                            }
+                        }
+
+                        rcgeo.zadd(dst, '0', tag + '*', rcgeo.print);
+
+                        processed++;
+                        if (processed == number) {
+                            console.log('DONE: index added = ' + processed)
+                            fn()
+                        }
+                    });
+                });
+
+            })
+        }
+
+        this.autocomplete = function(prefix, count, fn) {
+            this.autocomplete_set("allcity:", "allcities.autocomplete", prefix, count, fn);
+
+        }
+        this.autocomplete_set = function(hash, set, prefix, count, next) {
+
+            var results = [];
+            var rangelen = 50;
+            var start = 0;
+
+            var loadhash = function(keySet, fn) {
+
+                var items = [];
+                var ops = 0;
+                if (keySet.length > 0) {
+                    _.each(keySet, function(key) {
+                        rcgeo.hgetall(key, function(err, hash) {
+                            ops++;
+                            if (err) {
+                                return fn(new Error('loadhash failed for keyset: ' + keySet));
+                            }
+                            items.push(hash);
+                            if (ops == keySet.length) {
+                                return fn(null, items);
+                            }
+                        });
+                    });
+                } else {
+                    return fn(null, items);
+                }
+
+            }
+            var get_more_results = function(fn) {
+
+                if (results.length == count) {
+                    console.log("matches length return")
+                    return fn();
+                }
+
+                rcgeo.zrange(set, start, start + rangelen - 1, function(err, range) {
+
+                    var ops = 0;
+                    var len = range.length;
+                    console.log(range.length)
+                    console.log('range: range.length: ' + range.length);
+                    start += rangelen;
+                    if (range.length > 0) {
+                        var minlen = 0;
+
+                        for (var i = 0; i < range.length; i++) {
+                            minlen = ((range[i]).length >= prefix.length) ? prefix.length : (range[i]).length;
+                            if ((range[i]).substr(0, minlen) != prefix.substr(0, minlen)) {
+                                console.log('no more matches');
+                                count = results.length;
+                                //return get_more_results(fn)
+                                break;
+                            }
+                            if (((range[i]).indexOf('*', (range[i]).length - 1) != -1) && (results.length != count)) {
+                                var t = range[i];
+                                var t2 = t.substring(0, t.length - 1);
+                                results.push(hash + t2);
+                                //console.log('match: ' + t2);
+
+
+                            }
+                        }
+                        get_more_results(fn);
+                    }
+
+                });
+            }
+
+            rcgeo.zrank(set, prefix, function(err, rank) {
+
+                //console.log('zrank: rank: ' + rank);
+                if (rank == null) {
+                    console.log('No matches for: ' + prefix);
+                    next(null, [])
+                    return;
+                } else {
+                    start = rank;
+                }
+
+                get_more_results(function() {
+                    //console.log('RESULTS: ', results);
+
+                    loadhash(results, function(err, data) {
+                        return next(null, data)
+
+                    })
+
+                });
+            });
+        }
+
         this.list_regions_for_country = function(country, fn) {
             rcgeo.sort("country:" + country + ".regions", "ALPHA", function(err, citydata) {
                 if (err) fn(err)

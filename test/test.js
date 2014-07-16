@@ -1,7 +1,7 @@
 var assert = require("assert")
 
 var rgeoip = require(__dirname + '/../rgeoip.js')({
-    port: 6380,
+    port: 6379,
     host: "localhost"
 })
 
@@ -21,9 +21,35 @@ var developerGeo = {
 }
 var moretestips = require(__dirname + "/testips.json")
 var moretestlocs = require(__dirname + "/testgeos.json")
-
 var thecountrylist = null;
+var citylist = require(__dirname + "/testlist.json")
 
+
+describe('build the auto complete index', function() {
+    it('should build the index', function(done) {
+        rgeoip.build_index(10, "allcities", "allcities.autocomplete", function(err, data) {
+            if (err) throw err
+            done()
+        })
+    })
+});
+
+_.each(citylist, function(item) {
+    describe('get autocomplete for city ' + item, function() {
+        it('should return array of found cities', function(done) {
+            rgeoip.autocomplete(item, 10, function(err, data) {
+                /*if (typeof data !== "array") {
+                    throw new Error("no array found")
+                }*/
+                console.log("found: ", data, "for", item)
+                done()
+            })
+
+        })
+
+    })
+})
+/*
 describe('test list countries', function() {
     it('should return an array of countries', function(done) {
         rgeoip.list_countries(function(err, countrylist) {
@@ -169,4 +195,4 @@ _.each(moretestlocs, function(loc, range) {
         })
     })
 
-})
+})*/
