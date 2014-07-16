@@ -27,7 +27,8 @@ var citylist = require(__dirname + "/testlist.json")
 
 describe('build the auto complete index', function() {
     it('should build the index', function(done) {
-        rgeoip.build_index(10, "allcities", "allcities.autocomplete", function(err, data) {
+        rgeoip.build_index(10, "allcities.autocomplete", "ac.index", function(err, data) {
+            //this.timeout(50000);
             if (err) throw err
             done()
         })
@@ -49,6 +50,7 @@ _.each(citylist, function(item) {
 
     })
 })
+
 /*
 describe('test list countries', function() {
     it('should return an array of countries', function(done) {
@@ -120,6 +122,78 @@ describe('test list countries', function() {
     })
 })
 
+
+
+
+describe('test list countries', function() {
+    it('should return an array of countries', function(done) {
+        rgeoip.list_countries(function(err, countrylist) {
+            if (err) throw new Error(err)
+            if (countrylist === undefined) {
+                throw new Error("country list is undefined")
+            }
+            if (typeof(countrylist) !== "object") {
+                throw new Error("country list is not an object")
+            }
+
+            if (countrylist.length < 1) {
+                throw new Error("country list length < 1")
+            }
+
+
+            done()
+            _.each(countrylist, function(country, index) {
+
+                describe('test list states for country ' + country, function() {
+
+                    it('should be a list', function(done2) {
+                        rgeoip.list_states(country, function(err, statelist) {
+                            if (err) throw err
+                            done2()
+
+                            _.each(statelist, function(state, index) {
+                                describe('test city list for state ' + state, function() {
+                                    it('should be a list', function(done3) {
+                                        rgeoip.list_cities(country, state, function(err, citylist) {
+                                            if (!citylist)
+                                                throw new Error("no cities found for " + country + " " + state)
+                                            if (citylist.length == 0)
+                                                throw new Error("list cities zero cities for " + country + " " + state)
+                                            if (err) throw err
+                                            done3()
+
+                                        })
+                                    })
+                                })
+                            })
+
+                        })
+                    })
+                })
+
+
+            })
+
+            _.each(countrylist, function(country, index) {
+                describe('test region list for country ' + country, function() {
+                    it('should be a list', function(done4) {
+                        rgeoip.list_regions_for_country(country, function(err, citylist) {
+
+                            if (err) throw err
+
+                            if (citylist.length == 0)
+                                throw new Error("list regions zero cities for " + country + " " + state)
+                            done4()
+
+                        })
+                    })
+                })
+            })
+
+
+        })
+    })
+})
 
 
 describe('lookup ip 127.0.0.1', function() {

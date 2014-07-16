@@ -190,10 +190,19 @@ var developerIps = ["localhost", "127.0.0.1"]
 
                 //const char_limit = 8;
                 rcgeo.sort(src, "ALPHA", function(err, alltags) {
+
+                    if (err) {
+                        console.log(err);
+                        return fn(err)
+                    }
+
+                    console.log(alltags)
                     var number = alltags.length;
                     var processed = 0;
 
                     _.each(alltags, function(tag) {
+
+
 
                         var cutoff = char_limit;
                         var space = 0;
@@ -234,7 +243,7 @@ var developerIps = ["localhost", "127.0.0.1"]
         }
 
         this.autocomplete = function(prefix, count, fn) {
-            this.autocomplete_set("allcity:", "allcities.autocomplete", prefix, count, fn);
+            this.autocomplete_set("allcities:", "ac.index", prefix, count, fn);
 
         }
         this.autocomplete_set = function(hash, set, prefix, count, next) {
