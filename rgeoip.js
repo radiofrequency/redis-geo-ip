@@ -213,7 +213,7 @@ var developerIps = ["localhost", "127.0.0.1"]
                         } else {
                             space = tag.indexOf(' ');
                             if ((space > 0) && (space < char_limit)) {
-                                cutoff = space;
+                                //      cutoff = space;
                             }
                         }
 
@@ -246,12 +246,19 @@ var developerIps = ["localhost", "127.0.0.1"]
             this.autocomplete_set("allcities:", "ac.index", prefix, count, fn);
 
         }
+
+        var toTitleCase = function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
         this.autocomplete_set = function(hash, set, prefix, count, next) {
 
             var results = [];
             var rangelen = 50;
             var start = 0;
-
+            prefix = toTitleCase(prefix);
+            console.log("titlecased", prefix)
             var loadhash = function(keySet, fn) {
 
                 var items = [];
@@ -263,6 +270,8 @@ var developerIps = ["localhost", "127.0.0.1"]
                             if (err) {
                                 return fn(new Error('loadhash failed for keyset: ' + keySet));
                             }
+                            hash.display = hash.city + ", " + hash.state + ", " + hash.country;
+
                             items.push(hash);
                             if (ops == keySet.length) {
                                 return fn(null, items);
