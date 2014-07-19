@@ -24,7 +24,7 @@ var moretestlocs = require(__dirname + "/testgeos.json")
 var thecountrylist = null;
 var citylist = require(__dirname + "/testlist.json")
 
-
+/*
 describe('build the auto complete index', function() {
     it('should build the index', function(done) {
         rgeoip.build_index(10, "allcities.autocomplete", "ac.index", function(err, data) {
@@ -33,12 +33,12 @@ describe('build the auto complete index', function() {
             done()
         })
     })
-});
+});*/
 
 _.each(citylist, function(item) {
     describe('get autocomplete for city ' + item, function() {
         it('should return array of found cities', function(done) {
-            rgeoip.autocomplete(item, 10, function(err, data) {
+            rgeoip.autocomplete(item, 5, function(err, data) {
                 /*if (typeof data !== "array") {
                     throw new Error("no array found")
                 }*/
