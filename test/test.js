@@ -6,6 +6,8 @@ var rgeoip = require(__dirname + '/../rgeoip.js')({
 })
 
 var _ = require("underscore")
+var host = "127.0.0.1"
+
 
 var developerGeo = {
     "country": "Canada",
@@ -38,10 +40,8 @@ describe('build the auto complete index', function() {
 _.each(citylist, function(item) {
     describe('get autocomplete for city ' + item, function() {
         it('should return array of found cities', function(done) {
-            rgeoip.autocomplete(item, 5, function(err, data) {
-                /*if (typeof data !== "array") {
-                    throw new Error("no array found")
-                }*/
+            rgeoip.autocomplete(host, item, 5, function(err, data) {
+
                 console.log("found: ", data, "for", item)
                 done()
             })
@@ -51,150 +51,148 @@ _.each(citylist, function(item) {
     })
 })
 
+describe('test list countries', function() {
+    it('should return an array of countries', function(done) {
+        rgeoip.list_countries(function(err, countrylist) {
+            if (err) throw new Error(err)
+            if (countrylist === undefined) {
+                throw new Error("country list is undefined")
+            }
+            if (typeof(countrylist) !== "object") {
+                throw new Error("country list is not an object")
+            }
+
+            if (countrylist.length < 1) {
+                throw new Error("country list length < 1")
+            }
+
+
+            done()
+            _.each(countrylist, function(country, index) {
+
+                describe('test list states for country ' + country, function() {
+
+                    it('should be a list', function(done2) {
+                        rgeoip.list_states(country, function(err, statelist) {
+                            if (err) throw err
+                            done2()
+
+                            _.each(statelist, function(state, index) {
+                                describe('test city list for state ' + state, function() {
+                                    it('should be a list', function(done3) {
+                                        rgeoip.list_cities(country, state, function(err, citylist) {
+                                            if (!citylist)
+                                                throw new Error("no cities found for " + country + " " + state)
+                                            if (citylist.length == 0)
+                                                throw new Error("list cities zero cities for " + country + " " + state)
+                                            if (err) throw err
+                                            done3()
+
+                                        })
+                                    })
+                                })
+                            })
+
+                        })
+                    })
+                })
+
+
+            })
+
+            /*_.each(countrylist, function(country, index) {
+                describe('test region list for country ' + country, function() {
+                    it('should be a list', function(done4) {
+                        rgeoip.list_regions_for_country(country, function(err, citylist) {
+
+                            if (err) throw err
+
+                            if (citylist.length == 0)
+                                throw new Error("list regions zero cities for " + country + " " + state)
+                            done4()
+
+                        })
+                    })
+                })
+            })*/
+
+
+        })
+    })
+})
+
+
+
+describe('test list countries', function() {
+    it('should return an array of countries', function(done) {
+        rgeoip.list_countries(function(err, countrylist) {
+            if (err) throw new Error(err)
+            if (countrylist === undefined) {
+                throw new Error("country list is undefined")
+            }
+            if (typeof(countrylist) !== "object") {
+                throw new Error("country list is not an object")
+            }
+
+            if (countrylist.length < 1) {
+                throw new Error("country list length < 1")
+            }
+
+
+            done()
+            _.each(countrylist, function(country, index) {
+
+                describe('test list states for country ' + country, function() {
+
+                    it('should be a list', function(done2) {
+                        rgeoip.list_states(country, function(err, statelist) {
+                            if (err) throw err
+                            done2()
+
+                            _.each(statelist, function(state, index) {
+                                describe('test city list for state ' + state, function() {
+                                    it('should be a list', function(done3) {
+                                        rgeoip.list_cities(country, state, function(err, citylist) {
+                                            if (!citylist)
+                                                throw new Error("no cities found for " + country + " " + state)
+                                            if (citylist.length == 0)
+                                                throw new Error("list cities zero cities for " + country + " " + state)
+                                            if (err) throw err
+                                            done3()
+
+                                        })
+                                    })
+                                })
+                            })
+
+                        })
+                    })
+                })
+
+
+            })
+            /*
+            _.each(countrylist, function(country, index) {
+                describe('test region list for country ' + country, function() {
+                    it('should be a list', function(done4) {
+                        rgeoip.list_regions_for_country(country, function(err, citylist) {
+
+                            if (err) throw err
+
+                            if (citylist.length == 0)
+                                throw new Error("list regions zero cities for " + country + " " + state)
+                            done4()
+
+                        })
+                    })
+                })
+            })
+*/
+
+        })
+    })
+})
 /*
-describe('test list countries', function() {
-    it('should return an array of countries', function(done) {
-        rgeoip.list_countries(function(err, countrylist) {
-            if (err) throw new Error(err)
-            if (countrylist === undefined) {
-                throw new Error("country list is undefined")
-            }
-            if (typeof(countrylist) !== "object") {
-                throw new Error("country list is not an object")
-            }
-
-            if (countrylist.length < 1) {
-                throw new Error("country list length < 1")
-            }
-
-
-            done()
-            _.each(countrylist, function(country, index) {
-
-                describe('test list states for country ' + country, function() {
-
-                    it('should be a list', function(done2) {
-                        rgeoip.list_states(country, function(err, statelist) {
-                            if (err) throw err
-                            done2()
-
-                            _.each(statelist, function(state, index) {
-                                describe('test city list for state ' + state, function() {
-                                    it('should be a list', function(done3) {
-                                        rgeoip.list_cities(country, state, function(err, citylist) {
-                                            if (!citylist)
-                                                throw new Error("no cities found for " + country + " " + state)
-                                            if (citylist.length == 0)
-                                                throw new Error("list cities zero cities for " + country + " " + state)
-                                            if (err) throw err
-                                            done3()
-
-                                        })
-                                    })
-                                })
-                            })
-
-                        })
-                    })
-                })
-
-
-            })
-
-            _.each(countrylist, function(country, index) {
-                describe('test region list for country ' + country, function() {
-                    it('should be a list', function(done4) {
-                        rgeoip.list_regions_for_country(country, function(err, citylist) {
-
-                            if (err) throw err
-
-                            if (citylist.length == 0)
-                                throw new Error("list regions zero cities for " + country + " " + state)
-                            done4()
-
-                        })
-                    })
-                })
-            })
-
-
-        })
-    })
-})
-
-
-
-
-describe('test list countries', function() {
-    it('should return an array of countries', function(done) {
-        rgeoip.list_countries(function(err, countrylist) {
-            if (err) throw new Error(err)
-            if (countrylist === undefined) {
-                throw new Error("country list is undefined")
-            }
-            if (typeof(countrylist) !== "object") {
-                throw new Error("country list is not an object")
-            }
-
-            if (countrylist.length < 1) {
-                throw new Error("country list length < 1")
-            }
-
-
-            done()
-            _.each(countrylist, function(country, index) {
-
-                describe('test list states for country ' + country, function() {
-
-                    it('should be a list', function(done2) {
-                        rgeoip.list_states(country, function(err, statelist) {
-                            if (err) throw err
-                            done2()
-
-                            _.each(statelist, function(state, index) {
-                                describe('test city list for state ' + state, function() {
-                                    it('should be a list', function(done3) {
-                                        rgeoip.list_cities(country, state, function(err, citylist) {
-                                            if (!citylist)
-                                                throw new Error("no cities found for " + country + " " + state)
-                                            if (citylist.length == 0)
-                                                throw new Error("list cities zero cities for " + country + " " + state)
-                                            if (err) throw err
-                                            done3()
-
-                                        })
-                                    })
-                                })
-                            })
-
-                        })
-                    })
-                })
-
-
-            })
-
-            _.each(countrylist, function(country, index) {
-                describe('test region list for country ' + country, function() {
-                    it('should be a list', function(done4) {
-                        rgeoip.list_regions_for_country(country, function(err, citylist) {
-
-                            if (err) throw err
-
-                            if (citylist.length == 0)
-                                throw new Error("list regions zero cities for " + country + " " + state)
-                            done4()
-
-                        })
-                    })
-                })
-            })
-
-
-        })
-    })
-})
-
 
 describe('lookup ip 127.0.0.1', function() {
     it('should return developer geo', function(done) {
@@ -206,7 +204,7 @@ describe('lookup ip 127.0.0.1', function() {
         })
     })
 })
-
+*/
 
 var c = 0;
 _.each(moretestips, function(testip, range) {
@@ -269,4 +267,4 @@ _.each(moretestlocs, function(loc, range) {
         })
     })
 
-})*/
+})

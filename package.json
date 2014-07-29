@@ -1,6 +1,6 @@
 {
     "name": "rgeoip",
-    "version": "1.0.2",
+    "version": "1.2.0",
     "description": "redis geoip lookup",
     "main": "rgeoip.js",
     "directories": {

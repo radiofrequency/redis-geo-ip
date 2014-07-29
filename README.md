@@ -25,10 +25,16 @@ the redis database is loaded with data from geonames for geo decode and ip2locat
 
 ## Usage
 
-    var geoip = require('rgeoip')  
+    var geoip = require('rgeoip')({host:'localhost', port:6379})
+  
 	 	geoip.lookup_ip('127.0.0.1', function(err, geodata) {
       console.log(geodata)
     })
+    
+    geoip.autocomplete('127.0.0.1', 'Calgar', function(err, data) {  
+       console.log(data);
+    }
+
     geoip.list_countries(function(err, countries) {
       console.log(countries)
     }
