@@ -147,6 +147,8 @@ function app(options) {
                         return fn(new Error("cant parse geo data"), "lookupIP");
                     }
                     return fn(null, jdata);
+                } else {
+                    return fn(new Error("lookup_ip: can't find: " + ip), null)
                 }
             } else {
                 return fn(new Error("lookup_ip: can't find: " + ip), null)
