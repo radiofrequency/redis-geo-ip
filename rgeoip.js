@@ -271,13 +271,11 @@ function app(options) {
     }
 
     this.geodecode = function(lat, lon, fn) {
-
         getClosestGeoHash("City:geohash", geohasherjs.encode_dec(lat, lon), function(err, result) {
             if (err) return fn(err)
             return fn(null, result)
         })
     }
-
 }
 
 module.exports = function(options) {
