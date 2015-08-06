@@ -32,7 +32,7 @@ function app(options) {
     rcgeo.select(8, rcgeo.print)
 
     var deg2rad = function deg2rad(deg) {
-        return deg * (Mafth.PI / 180)
+        return deg * (Math.PI / 180)
     }
     var dot2num = function dot2num(dot) {
         if (dot) {
