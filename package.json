@@ -12,8 +12,8 @@
   "author": "Ryan Folstad",
   "license": "LICENSE!",
   "dependencies": {
-    "redis": "*",
-    "underscore": "*",
-    "ngeohash": "*"
+    "lodash": "^3.10.1",
+    "ngeohash": "^0.6.0",
+    "redis": "^2.1.0",
   }
 }

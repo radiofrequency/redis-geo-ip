@@ -1,21 +1,12 @@
 # rgeoip
 
-<<<<<<< HEAD
 rgeoip is a module that uses a redis database for geo ip lookups  
 the redis database is loaded with data from geonames for geo decode and ip2location for ip lookup
 
 ## Installation
 
 	  $ npm install https://github.com/muzooka/rgeoip
-=======
-rgeoip is a module that uses a redis database for geo ip lookups   
-the redis database is loaded with data from geonames for geo decode and ip2location for ip lookup  
-the redis db is generate via: https://github.com/doat/geodis
 
-## Installation
-
-	  $ npm install radiofrequency/redis-geo-ip --save
->>>>>>> 43f03026853aaf843cfb4ec5065faf4dbec02380
 
 ## Options
   
@@ -35,7 +26,6 @@ the redis db is generate via: https://github.com/doat/geodis
 
 ## Usage
 
-<<<<<<< HEAD
     var geoip = require('rgeoip')({host:'localhost', port:6379})
   
 	 	geoip.lookup_ip('127.0.0.1', function(err, geodata) {
@@ -46,12 +36,7 @@ the redis db is generate via: https://github.com/doat/geodis
        console.log(data);
     }
 
-=======
-    var geoip = require('rgeoip')  
-	 	geoip.lookup_ip('127.0.0.1', function(err, geodata) {
-      console.log(geodata)
-    })
->>>>>>> 43f03026853aaf843cfb4ec5065faf4dbec02380
+
     geoip.list_countries(function(err, countries) {
       console.log(countries)
     }

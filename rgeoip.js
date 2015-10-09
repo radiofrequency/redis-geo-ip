@@ -1,6 +1,6 @@
 var ngeo = require("ngeohash");
 var redis = require('redis')
-var _ = require('underscore')
+var _ = require('lodash')
 //var geolib = require('geolib')
 var rcgeo;
 
