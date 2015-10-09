@@ -1,4 +1,3 @@
-//var geohasherjs = require(__dirname + "/libs/geohasherjs/build/Release/geohasherjs");
 var ngeo = require("ngeohash");
 var redis = require('redis')
 var _ = require('underscore')
@@ -19,8 +18,6 @@ var developerGeo = {
     "timezone": "-07:00",
 }
 var developerIps = ["localhost", "127.0.0.1"]
-
-
 
 function app(options) {
     var self = this;
@@ -47,6 +44,7 @@ function app(options) {
             return "";
         }
     }
+
 
 
     var geo_decode= function(hash, fn) {
@@ -92,7 +90,7 @@ function app(options) {
                 } catch (ex) {
                     result = false;
                 }
-                return fn(null, result);
+                return fn(null, result)
             });
         });
     }
@@ -102,7 +100,6 @@ function app(options) {
                 var closestDist = 0;
                 var closestItem = null;
                 var candidates = rangeresult.concat(revrangeresult);
-                //console.log("candidates", candidates);
                 if (candidates.length < 1) {
                     return fn(null, "none found");
 
@@ -110,7 +107,7 @@ function app(options) {
 
                     var ops = 0;
                     _.each(candidates, function(candidate) {
-                        console.log("found candidates", candidate)
+                        //console.log("found candidates", candidate)
                         var stuff = candidate.split(":");
                         try {
                             var candidategeo = geo_encode(stuff[1], stuff[2], 64);
@@ -143,11 +140,10 @@ function app(options) {
                                     rcgeo.hgetall(closestItem, function(err, item) {
                                         //console.log("item", item);
 
-                                        console.log(item);
+                                        //console.log(item);
                                         return fn(err, item);
 
                                     });
-
                                 }
                             }
                         });
@@ -171,6 +167,8 @@ function app(options) {
                         return fn(new Error("cant parse geo data"), "lookupIP");
                     }
                     return fn(null, jdata);
+                } else {
+                    return fn(new Error("lookup_ip: can't find: " + ip), null)
                 }
             } else {
                 return fn(new Error("lookup_ip: can't find: " + ip), null)
@@ -202,7 +200,6 @@ function app(options) {
             console.log("found ip data", ipdata)
             autocomplete_set("allcities:", "allcities.ac." + ipdata.country + ".'" + ipdata.state + "'", prefix, searchcount, function(err, results) {
                 if (err) throw err
-                //console.log("set1", results)
                 var rest = count - results.length
 
                 _.each(results, function(item) {
@@ -270,7 +267,7 @@ function app(options) {
         rcgeo.zrangebylex(set, "[" + prefix, "[" + prefix + "z", "LIMIT", "0", count,
             function(err, results) {
                 if (results == null) {
-                    next(null, []);
+                    next(null, [])
                     return;
                 }
                 loadhash(results, function(err, data) {

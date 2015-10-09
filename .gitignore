@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 libs/geohasherjs/build/*
 .DS_Store
+=======
+libs/geohasherjs/build
+.DS_Store
+*.swp
+node_modules
+>>>>>>> 43f03026853aaf843cfb4ec5065faf4dbec02380

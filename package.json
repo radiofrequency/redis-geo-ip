@@ -7,13 +7,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha",
-    //"preinstall": "npm build libs/geohasherjs/. --unsafe-perm"
+    "test": "mocha"
   },
   "author": "Ryan Folstad",
   "license": "LICENSE!",
   "dependencies": {
-    "redis": "^1.0.0",
+    "redis": "*",
     "underscore": "*",
     "ngeohash": "*"
   }
