@@ -1,19 +1,20 @@
 {
-    "name": "rgeoip",
-    "version": "1.2.1",
-    "description": "redis geoip lookup",
-    "main": "rgeoip.js",
-    "directories": {
-        "test": "test"
-    },
-    "scripts": {
-        "test": "mocha",
-        "preinstall": "npm build libs/geohasherjs/. --unsafe-perm"
-    },
-    "author": "Ryan Folstad",
-    "license": "LICENSE!",
-    "dependencies": {
-        "redis": "^0.10.3",
-        "underscore": "*"
-    }
+  "name": "rgeoip",
+  "version": "1.2.1",
+  "description": "redis geoip lookup",
+  "main": "rgeoip.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    //"preinstall": "npm build libs/geohasherjs/. --unsafe-perm"
+  },
+  "author": "Ryan Folstad",
+  "license": "LICENSE!",
+  "dependencies": {
+    "redis": "^1.0.0",
+    "underscore": "*",
+    "ngeohash": "*"
+  }
 }

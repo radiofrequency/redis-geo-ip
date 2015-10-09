@@ -1,7 +1,11 @@
-var geohasherjs = require(__dirname + "/libs/geohasherjs/build/Release/geohasherjs");
+//var geohasherjs = require(__dirname + "/libs/geohasherjs/build/Release/geohasherjs");
+var ngeo = require("ngeohash");
 var redis = require('redis')
 var _ = require('underscore')
+//var geolib = require('geolib')
 var rcgeo;
+
+var usemine = false;
 
 var developerGeo = {
     "country": "CA",
@@ -15,6 +19,7 @@ var developerGeo = {
     "timezone": "-07:00",
 }
 var developerIps = ["localhost", "127.0.0.1"]
+
 
 
 function app(options) {
@@ -43,6 +48,27 @@ function app(options) {
         }
     }
 
+
+    var geo_decode= function(hash, fn) {
+        if (usemine) {
+            //geohasherjs.decode_dec(hash, function(err, lat, lon) {
+            //    return fn(err, {lat: lat, lon: lon});
+            //});
+        } else {
+            return fn(null, ngeo.decode_int(hash, 64));
+
+        }
+
+    }
+    var geo_encode = function(lat, lon) {
+    if (usemine) {
+            //return geohasherjs.encode_dec(lat, lon);
+
+        } else {
+            return ngeo.encode_int(lat,lon, 64);
+
+        }
+    }
     var getDistanceFromLatLonInKm = function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         var R = 6371; // Radius of the earth in km
         var dLat = deg2rad(lat2 - lat1); // deg2rad below
@@ -57,20 +83,16 @@ function app(options) {
     }
 
     var getDistance = function getDistance(geohash1, geohash2, fn) {
-        geohasherjs.decode_dec(geohash1, function(err, lat, lon) {
-            var coords1 = {};
-            coords1.lat = lat;
-            coords1.lon = lon;
-            geohasherjs.decode_dec(geohash2, function(err, lat, lon) {
-                var coords2 = {}
-                coords2.lat = lat;
-                coords2.lon = lon;
+        geo_decode(geohash1, function(err, coords1) {
+
+                 geo_decode(geohash2,function(err, coords2) {
+
                 try {
                     var result = getDistanceFromLatLonInKm(coords1.lat, coords1.lon, coords2.lat, coords2.lon);
                 } catch (ex) {
                     result = false;
                 }
-                return fn(null, result)
+                return fn(null, result);
             });
         });
     }
@@ -80,7 +102,7 @@ function app(options) {
                 var closestDist = 0;
                 var closestItem = null;
                 var candidates = rangeresult.concat(revrangeresult);
-
+                //console.log("candidates", candidates);
                 if (candidates.length < 1) {
                     return fn(null, "none found");
 
@@ -88,9 +110,10 @@ function app(options) {
 
                     var ops = 0;
                     _.each(candidates, function(candidate) {
+                        console.log("found candidates", candidate)
                         var stuff = candidate.split(":");
                         try {
-                            var candidategeo = geohasherjs.encode_dec(stuff[1], stuff[2]);
+                            var candidategeo = geo_encode(stuff[1], stuff[2], 64);
 
                         } catch (ex) {
                             return fn(new Error("unable to geohash lat / long"), "getObjectGeoHash error");
@@ -115,15 +138,16 @@ function app(options) {
                                         state: null,
                                         country: null
                                     })
-                                } else {
-                                    var newstuff = closestItem.split(":");
-                                    return fn(null, {
-                                        city: newstuff[3],
-                                        lat: parseFloat(newstuff[1]),
-                                        lon: parseFloat(newstuff[2]),
-                                        state: newstuff[5],
-                                        country: newstuff[4]
+                                } else {  
+
+                                    rcgeo.hgetall(closestItem, function(err, item) {
+                                        //console.log("item", item);
+
+                                        console.log(item);
+                                        return fn(err, item);
+
                                     });
+
                                 }
                             }
                         });
@@ -178,7 +202,7 @@ function app(options) {
             console.log("found ip data", ipdata)
             autocomplete_set("allcities:", "allcities.ac." + ipdata.country + ".'" + ipdata.state + "'", prefix, searchcount, function(err, results) {
                 if (err) throw err
-                console.log("set1", results)
+                //console.log("set1", results)
                 var rest = count - results.length
 
                 _.each(results, function(item) {
@@ -246,7 +270,7 @@ function app(options) {
         rcgeo.zrangebylex(set, "[" + prefix, "[" + prefix + "z", "LIMIT", "0", count,
             function(err, results) {
                 if (results == null) {
-                    next(null, [])
+                    next(null, []);
                     return;
                 }
                 loadhash(results, function(err, data) {
@@ -271,9 +295,9 @@ function app(options) {
     }
 
     this.geodecode = function(lat, lon, fn) {
-        getClosestGeoHash("City:geohash", geohasherjs.encode_dec(lat, lon), function(err, result) {
-            if (err) return fn(err)
-            return fn(null, result)
+        getClosestGeoHash("City:geohash", geo_encode(lat, lon), function(err, result) {
+           // if (err) return fn(err)
+            return fn(err, result)
         })
     }
 }
