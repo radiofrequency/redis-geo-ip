@@ -129,6 +129,7 @@ function app(options) {
                             if (ops == candidates.length) {
                                 if (closestItem == null) {
                                     return fn(null, {
+                                        name: null,
                                         city: null,
                                         lat: null,
                                         lon: null,
@@ -139,7 +140,9 @@ function app(options) {
 
                                     rcgeo.hgetall(closestItem, function(err, item) {
                                         //console.log("item", item);
-
+                                        if (item.city === undefined) {
+                                            item.city = item.name;
+                                        }
                                         //console.log(item);
                                         return fn(err, item);
 
