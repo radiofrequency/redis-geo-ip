@@ -7,12 +7,13 @@ var rcgeo;
 var usemine = false;
 
 var developerGeo = {
-    "country": "CA",
+    "country": "Canada",
+    "country_code": "CA",
     "lon": -123.11934,
     "zipcode": "V5T 1C8",
     state: "Alberta",
-    countryName: "Canada",
     "city": "Calgary",
+    "name": "Calgary",
     "key": "3625168896:3625172991",
     "lat": 49.24966,
     "timezone": "-07:00",
@@ -23,7 +24,7 @@ function app(options) {
     var self = this;
     if (typeof(options) === "undefined") options = {}
     rcgeo = options.client || new require('redis').createClient(options.port || options.socket, options.host, options);
-    if (typeof(rcgeo) === "undefined") throw "no redis connection"
+    if (typeof(rcgeo) === "undefined") throw "no redis connection";
 
     if (options.pass) {
         rcgeo.auth(options.pass, function(err) {
