@@ -87,11 +87,11 @@ function app(options) {
                  geo_decode(geohash2,function(err, coords2) {
 
                 try {
-                    var result = getDistanceFromLatLonInKm(coords1.lat, coords1.lon, coords2.lat, coords2.lon);
+                    var result = getDistanceFromLatLonInKm(coords1.latitude, coords1.longitude, coords2.latitude, coords2.longitude);
                 } catch (ex) {
                     result = false;
                 }
-                return fn(null, result)
+                return fn(null, result);
             });
         });
     }
