@@ -144,6 +144,8 @@ function app(options) {
                                         if (item.city === undefined) {
                                             item.city = item.name;
                                         }
+                                        delete item.population;
+                                        delete item.altname;
                                         //console.log(item);
                                         return fn(err, item);
 
