@@ -102,7 +102,7 @@ function app(options) {
                 var closestItem = null;
                 var candidates = rangeresult.concat(revrangeresult);
                 if (candidates.length < 1) {
-                    return fn(null, "none found");
+                    return fn("none found");
 
                 } else {
 
